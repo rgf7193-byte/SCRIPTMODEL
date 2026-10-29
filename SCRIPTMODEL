@@ -643,7 +643,7 @@ local menuButton = _G.DeltaMenuButton
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
--- 🌟 MODIFICAÇÃO TEXTUAL: Botão renomeado para STEAL (Delta Neon)
+-- Botão ON/OFF de Status Inferior (Delta Neon)
 local toggleButton = Instance.new("TextButton")
 toggleButton.Name = "ToggleButton"
 toggleButton.Size = UDim2.new(0, 350, 0, 42) 
@@ -672,7 +672,7 @@ local colors = {
     Hover = Color3.fromRGB(45, 45, 45)
 }
 
-toggleButton.MouseButton1Click:Connect(function()
+toggleButton.MouseButton1Click.Connect(function()
     _G.AutoFarmAtivo = not _G.AutoFarmAtivo
     local targetBg = _G.AutoFarmAtivo and colors.OnBg or colors.OffBg
     local targetStroke = _G.AutoFarmAtivo and colors.OnStroke or colors.OffStroke
@@ -693,15 +693,15 @@ toggleButton.MouseButton1Click:Connect(function()
     end
 end)
 
-toggleButton.MouseEnter:Connect(function() if not _G.AutoFarmAtivo then TweenService:Create(toggleButton, TweenInfo.new(0.3), {BackgroundColor3 = colors.Hover}):Play() end end)
-toggleButton.MouseLeave:Connect(function() if not _G.AutoFarmAtivo then TweenService:Create(toggleButton, TweenInfo.new(0.3), {BackgroundColor3 = colors.OffBg}):Play() end end)
+toggleButton.MouseEnter.Connect(function() if not _G.AutoFarmAtivo then TweenService:Create(toggleButton, TweenInfo.new(0.3), {BackgroundColor3 = colors.Hover}):Play() end end)
+toggleButton.MouseLeave.Connect(function() if not _G.AutoFarmAtivo then TweenService:Create(toggleButton, TweenInfo.new(0.3), {BackgroundColor3 = colors.OffBg}):Play() end end)
 
 -- Animação do Menu Deslizando
 local menuOpen = false
 local closedPosition = UDim2.new(1, 50, 0, 75)   
 local openedPosition = UDim2.new(1, -420, 0, 75) 
 
-menuButton.MouseButton1Click:Connect(function()
+menuButton.MouseButton1Click.Connect(function()
     menuOpen = not menuOpen
     local targetPosition = menuOpen and openedPosition or closedPosition
     TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = targetPosition}):Play()
@@ -711,7 +711,7 @@ menuButton.MouseButton1Click:Connect(function()
     TweenService:Create(menuButton, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
 end)
 
--- Loops de Execução Ativos
+-- Loop de Execução do Motor Teleguiado
 task.spawn(function()
     while true do
         if _G.AutoFarmAtivo and type(_G.ExecutarTeleguiadoLennon) == "function" then
@@ -721,9 +721,10 @@ task.spawn(function()
     end
 end)
 
+-- 🌟 LOOP DE REFRESH CORRIGIDO: Agora atualiza as caixinhas sem parar, mesmo com o STEAL ativado!
 task.spawn(function()
     while true do
-        if not _G.AutoFarmAtivo and type(_G.AtuaisModelos) == "function" then 
+        if type(_G.AtuaisModelos) == "function" then 
             pcall(_G.AtuaisModelos) 
         end
         task.wait(3.0)

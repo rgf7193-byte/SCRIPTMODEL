@@ -178,8 +178,8 @@ _G.FormatNumber = function(num)
 	local n13 = tonumber(num) or 0
 	local n14 = math.abs(n13)
 	for _, v16 in ipairs({ { 1e12, "T" }, { 1e9, "B" }, { 1000000, "M" }, { 1000, "K" } }) do
-		if n14 >= v16[1] then
-			return (string.format("%.2f", n13 / v16[1]):gsub("(%..-)0+$", "%1"):gsub("%.$", "")) .. v16[2]
+		if n14 >= v16 then
+			return (string.format("%.2f", n13 / v16):gsub("(%..-)0+$", "%1"):gsub("%.$", "")) .. v16
 		end
 	end
 	return tostring(math.floor(n13 + 0.5))
@@ -432,7 +432,7 @@ local RunService = game:GetService("RunService")
 _G.ProcessarTrajetoCompletoLennon = function(ovoID, meuHrp, humanoid, playerGui, player, character)
     local coordenadaIntermediaria = Vector3.new(613.4, 70.6, -304.3) -- Parada 1
     local coordenadaFinal = Vector3.new(499.2, 70.6, -295.1)        -- Parada Final
-    local velocidadeEtapa1 = 4500                                    -- Velocidade inicial até a intermediária
+    local velocidadEtapa1 = 4500                                    -- Velocidade inicial até a intermediária
     local velocidadeEtapa2 = 300                                     -- Velocidade da última corrida
     local conexaoNovaPrompt = nil
 
@@ -524,7 +524,7 @@ _G.ProcessarTrajetoCompletoLennon = function(ovoID, meuHrp, humanoid, playerGui,
 
     -- ETAPA 1: Teleport constante até a coordenada intermediária
     if _G.ActiveSteals[ovoID] then
-        moverComHeartbeat(coordenadaIntermediaria, velocidadeEtapa1)
+        moverComHeartbeat(coordenadaIntermediaria, velocidadEtapa1)
     end
 
     -- CHEGOU NA INTERMEDIÁRIA: Sincronização dos tempos com a trava de física ativa
@@ -600,7 +600,7 @@ _G.ExecutarTeleguiadoLennon = function()
             bv.MaxForce = Vector3.new(1e6, 1e6, 1e6)
             bv.Parent = meuHrp
 
-            -- 🌟 TRAVA DE SOLO INTERNA: Ignora a altura (Y) do ovo gigante para não voar
+            -- TRAVA DE SOLO INTERNA: Ignora a altura (Y) do ovo gigante para não voar
             local destinoOvo = Vector3.new(posicaoAlvo.X, meuHrp.Position.Y, posicaoAlvo.Z)
             
             while _G.AutoFarmAtivo and _G.BichoSelecionadoUid == melhorAlvoUid and (destinoOvo - meuHrp.Position).Magnitude > 3 do
@@ -672,7 +672,7 @@ local colors = {
     Hover = Color3.fromRGB(45, 45, 45)
 }
 
-toggleButton.MouseButton1Click.Connect(function()
+toggleButton.MouseButton1Click:Connect(function()
     _G.AutoFarmAtivo = not _G.AutoFarmAtivo
     local targetBg = _G.AutoFarmAtivo and colors.OnBg or colors.OffBg
     local targetStroke = _G.AutoFarmAtivo and colors.OnStroke or colors.OffStroke
@@ -693,15 +693,15 @@ toggleButton.MouseButton1Click.Connect(function()
     end
 end)
 
-toggleButton.MouseEnter.Connect(function() if not _G.AutoFarmAtivo then TweenService:Create(toggleButton, TweenInfo.new(0.3), {BackgroundColor3 = colors.Hover}):Play() end end)
-toggleButton.MouseLeave.Connect(function() if not _G.AutoFarmAtivo then TweenService:Create(toggleButton, TweenInfo.new(0.3), {BackgroundColor3 = colors.OffBg}):Play() end end)
+toggleButton.MouseEnter:Connect(function() if not _G.AutoFarmAtivo then TweenService:Create(toggleButton, TweenInfo.new(0.3), {BackgroundColor3 = colors.Hover}):Play() end end)
+toggleButton.MouseLeave:Connect(function() if not _G.AutoFarmAtivo then TweenService:Create(toggleButton, TweenInfo.new(0.3), {BackgroundColor3 = colors.OffBg}):Play() end end)
 
 -- Animação do Menu Deslizando
 local menuOpen = false
 local closedPosition = UDim2.new(1, 50, 0, 75)   
 local openedPosition = UDim2.new(1, -420, 0, 75) 
 
-menuButton.MouseButton1Click.Connect(function()
+menuButton.MouseButton1Click:Connect(function()
     menuOpen = not menuOpen
     local targetPosition = menuOpen and openedPosition or closedPosition
     TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = targetPosition}):Play()
@@ -721,7 +721,7 @@ task.spawn(function()
     end
 end)
 
--- 🌟 LOOP DE REFRESH CORRIGIDO: Agora atualiza as caixinhas sem parar, mesmo com o STEAL ativado!
+-- LOOP DE REFRESH CORRIGIDO: Agora atualiza as caixinhas sem parar, mesmo com o STEAL ativado!
 task.spawn(function()
     while true do
         if type(_G.AtuaisModelos) == "function" then 

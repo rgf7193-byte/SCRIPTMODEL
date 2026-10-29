@@ -35,7 +35,7 @@ end
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
 mainFrame.Size = UDim2.new(0, 400, 0, 300)
-mainFrame.Position = UDim2.new(1, 50, 0, 75) -- Começa escondida na direita
+mainFrame.Position = UDim2.new(1, 50, 0, 75)
 mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20) 
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
@@ -178,8 +178,8 @@ _G.FormatNumber = function(num)
 	local n13 = tonumber(num) or 0
 	local n14 = math.abs(n13)
 	for _, v16 in ipairs({ { 1e12, "T" }, { 1e9, "B" }, { 1000000, "M" }, { 1000, "K" } }) do
-		if n14 >= v16 then
-			return (string.format("%.2f", n13 / v16):gsub("(%..-)0+$", "%1"):gsub("%.$", "")) .. v16
+		if n14 >= v16[1] then
+			return (string.format("%.2f", n13 / v16[1]):gsub("(%..-)0+$", "%1"):gsub("%.$", "")) .. v16[2]
 		end
 	end
 	return tostring(math.floor(n13 + 0.5))
@@ -604,7 +604,6 @@ _G.ExecutarTeleguiadoLennon = function()
             local destinoOvo = Vector3.new(posicaoAlvo.X, meuHrp.Position.Y, posicaoAlvo.Z)
             
             while _G.AutoFarmAtivo and _G.BichoSelecionadoUid == melhorAlvoUid and (destinoOvo - meuHrp.Position).Magnitude > 3 do
-                -- Recalcula a direção mantendo a altura do seu próprio pé no chão
                 destinoOvo = Vector3.new(posicaoAlvo.X, meuHrp.Position.Y, posicaoAlvo.Z)
                 local direcao = (destinoOvo - meuHrp.Position).Unit
                 bv.Velocity = direcao * 300
@@ -615,7 +614,6 @@ _G.ExecutarTeleguiadoLennon = function()
             meuHrp.AssemblyLinearVelocity = Vector3.zero
             task.wait(0.40)
 
-            -- Verifica se o farm continua ativo e se o bicho ainda é o selecionado antes de disparar as ações
             if _G.AutoFarmAtivo and _G.BichoSelecionadoUid == melhorAlvoUid then
                 local ovoID = melhorAlvoUid
                 if not _G.ActiveSteals then _G.ActiveSteals = {} end
@@ -721,7 +719,7 @@ task.spawn(function()
     end
 end)
 
--- LOOP DE REFRESH CORRIGIDO: Agora atualiza as caixinhas sem parar, mesmo com o STEAL ativado!
+-- LOOP DE REFRESH CONTÍNUO: Agora atualiza as caixinhas o tempo todo sem travar!
 task.spawn(function()
     while true do
         if type(_G.AtuaisModelos) == "function" then 

@@ -567,7 +567,7 @@ end
 _G.ExecutarTeleguiadoLennon = function()
     if not _G.AutoFarmAtivo or tick() < _G.CooldownFarm then return end
     
-    -- 🌟 MODIFICAÇÃO CHAVE: Bloqueia o avanço e a atualização se não houver NENHUM bicho explicitamente selecionado
+    -- Bloqueia o avanço e a atualização se não houver NENHUM bicho explicitamente selecionado
     if not _G.BichoSelecionadoUid then 
         task.wait(0.2)
         return 
@@ -600,9 +600,12 @@ _G.ExecutarTeleguiadoLennon = function()
             bv.MaxForce = Vector3.new(1e6, 1e6, 1e6)
             bv.Parent = meuHrp
 
-            local destinoOvo = posicaoAlvo + Vector3.new(0, 2, 0)
+            -- 🌟 TRAVA DE SOLO INTERNA: Ignora a altura (Y) do ovo gigante para não voar
+            local destinoOvo = Vector3.new(posicaoAlvo.X, meuHrp.Position.Y, posicaoAlvo.Z)
             
             while _G.AutoFarmAtivo and _G.BichoSelecionadoUid == melhorAlvoUid and (destinoOvo - meuHrp.Position).Magnitude > 3 do
+                -- Recalcula a direção mantendo a altura do seu próprio pé no chão
+                destinoOvo = Vector3.new(posicaoAlvo.X, meuHrp.Position.Y, posicaoAlvo.Z)
                 local direcao = (destinoOvo - meuHrp.Position).Unit
                 bv.Velocity = direcao * 300
                 task.wait()
@@ -896,8 +899,7 @@ _G.UIS.InputChanged:Connect(function(input)
     end
 end)
 
-print("[PARTE 1] Interface carregada e Tapete ESP invisível gerado.")
--- ========================================================
+print("[PARTE 1] Interface carregada e Tapete ESP invisível gerado.")-- ========================================================
 -- [PARTE 2] GERADOR DO PAINEL COMPLEMENTAR E SLIDER
 -- ========================================================
 if not _G.BorderBox or not _G.ExpandButton then warn("Execute a Parte 1 primeiro!") return end
